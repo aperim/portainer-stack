@@ -1,0 +1,53 @@
+# .github/workflows/generate-stack-files.yml
+
+name: Generate Stack Files
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Check out the repository.
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Python environment.
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      # Step 3: Install dependencies.
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install PyYAML Jinja2
+
+      # Step 4: Render templates.
+      - name: Render templates
+        run: |
+          python render_templates.py
+
+      # Step 5: Configure Git user.
+      - name: Set Git user
+        run: |
+          git config --local user.name "GitHub Action"
+          git config --local user.email "action@github.com"
+
+      # Step 6: Commit and push changes.
+      - name: Commit and push changes
+        run: |
+          git add docker-compose.yaml stack.env
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Auto-generated stack files [skip ci]"
+            git push origin HEAD:${{ github.ref }}
+          fi

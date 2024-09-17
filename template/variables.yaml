@@ -1,0 +1,6 @@
+web_image: nginx
+web_version: latest
+web_port: 8080
+database_url: "postgres://{{ database_user }}:{{ database_password }}@db:5432/mydb"
+database_user: admin
+database_password: secret

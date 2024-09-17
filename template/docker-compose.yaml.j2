@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  web:
+    image: '{{ web_image }}:{{ web_version }}'
+    ports:
+      - '{{ web_port }}:80'
+    environment:
+      - DATABASE_URL={{ database_url }}
